@@ -57,9 +57,9 @@ const styles = StyleSheet.create({
 const abb = (number) => {
   return Math.abs(number) > 999 ? Math.sign(number)*((Math.abs(number)/1000).toFixed(1)) + 'k' : Math.sign(number)*Math.abs(number);
 };
-const RepositoryItem = ({props}) => {
+const RepositoryItem = ({ props, testID }) => {
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID={testID}>
       <View style={styles.intro}>
         <Image style={styles.avatar} source={{uri:`${props.ownerAvatarUrl}`,}}/>
         <View style={styles.introOwner}>

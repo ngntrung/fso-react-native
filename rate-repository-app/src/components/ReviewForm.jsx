@@ -5,11 +5,13 @@ import Text from './Text';
 import { Formik } from 'formik';
 import theme from '../theme';
 import * as yup from 'yup';
-import useSignIn from '../hooks/useSignin';
+import useCreateReview from '../hooks/useCreateReview';
 
 const initialValues = {
-  username: '',
-  password: '',
+  repositoryOwner: '',
+  repositoryName: '',
+  rating: '',
+  review: '',
 };
 
 const styles = {
@@ -38,22 +40,32 @@ const styles = {
 
 };
 const validationSchema = yup.object().shape({
-  username: yup
+  ownerName: yup
     .string()
-    .required('Username is required'),
-  password: yup
+    .required('Repository owner name is required'),
+  repositoryName: yup
     .string()
-    .required('Password is required'),
+    .required('Repository name is required'),
+  rating: yup
+  .number()
+  .integer()
+  .min(0)
+  .max(100)
+  .required('Rating is required'),
+  text: yup
+  .string()
 });
-export const SignInInput = ({ onSubmit }) => {
+export const ReviewInput = ({ onSubmit }) => {
   return (
     <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={validationSchema}>
     {({ handleSubmit }) => (
       <View style={styles.container}>
-        <FormikTextInput name='username' placeholder='Username' testID='usernameInput'/>
-        <FormikTextInput name='password' placeholder='Password' secureTextEntry testID='passwordInput'/>
-        <Pressable onPress={handleSubmit} style={styles.submitButton} testID='submitBtn'>
-          <Text style={styles.submitBtnText}>Sign in</Text>
+        <FormikTextInput name='ownerName' placeholder='Repository owner name' />
+        <FormikTextInput name='repositoryName' placeholder='Repository name' />
+        <FormikTextInput name='rating' placeholder='Rating between 0 and 100' />
+        <FormikTextInput name='text' placeholder='Review' multiline/>
+        <Pressable onPress={handleSubmit} style={styles.submitButton} >
+          <Text style={styles.submitBtnText}>Create a review</Text>
         </Pressable>
       </View>
     )}
@@ -62,22 +74,23 @@ export const SignInInput = ({ onSubmit }) => {
   );
 };
 
-const SignInForm = () => {
-  const [signIn] = useSignIn();
+const ReviewForm = () => {
+  const [createReview] = useCreateReview();
 
   const onSubmit = async (values) => {
-    const { username, password } = values;
+    const { ownerName, repositoryName, rating, text } = values;
 
     try {
-      await signIn({ username, password });
+      const { data } = await createReview({ ownerName, repositoryName, rating, text });
+      console.log(data);
     } catch (e) {
       console.log(e);
     }
   };
   return (
-    <SignInInput onSubmit={onSubmit} />
+    <ReviewInput onSubmit={onSubmit} />
   );
 };
 
-export default SignInForm;
+export default ReviewForm;
 

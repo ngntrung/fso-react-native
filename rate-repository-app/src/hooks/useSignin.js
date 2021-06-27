@@ -13,7 +13,7 @@ const useSignIn = () => {
     const result = await mutate({ variables: { username, password } });
     authStorage.setAccessToken(result.data.authorize.accessToken);
     client.resetStore();
-    history.push('/repository');
+    history.push('/repositories');
     return result;
   };
 

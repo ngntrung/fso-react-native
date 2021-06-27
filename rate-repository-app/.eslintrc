@@ -3,12 +3,16 @@
   "settings": {
     "react": {
       "version": "detect"
+    },
+    "jest": {
+      "version": "27"
     }
   },
   "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:jest/recommended"],
   "parser": "babel-eslint",
   "env": {
-    "browser": true
+    "browser": true,
+    "jest": true
   },
   "rules": {
     "react/prop-types": "off",

@@ -1,16 +1,24 @@
 import React from 'react';
-import { View, Pressable, ScrollView } from 'react-native';
+import { View, Pressable, ScrollView, StyleSheet } from 'react-native';
 import Text from './Text';
-import { Link } from 'react-router-native';
+import { useHistory } from 'react-router-native';
 import { useQuery, useApolloClient } from '@apollo/client';
 import { AUTHORIZED_USER } from '../graphql/queries';
 import useAuthStorage from '../hooks/useAuthStorage';
+
+const styles = StyleSheet.create({
+  tabStyle: {
+    marginHorizontal: 8,
+    marginVertical: 16
+  }
+});
 
 const AppBar = () => {
   const authStorage = useAuthStorage();
   const token = authStorage.getAccessToken();
   const authorized = useQuery(AUTHORIZED_USER, { Authorization: `Beaer ${token}` });
   const client = useApolloClient();
+  const history = useHistory();
 
   const signOut = () => {
     authStorage.removeAccessToken();
@@ -20,23 +28,32 @@ const AppBar = () => {
   return (
     <View>
       <ScrollView horizontal>
-        <Pressable onPress={()=>console.log('tab pressed')}>
-          <Link to='/repository'>
-            <Text style={{ margin: 16 }} color='textSecondary' fontWeight='bold' fontSize='subheading'>Repository </Text>
-          </Link>
+        <Pressable onPress={() => { history.push('/repositories'); }}>
+            <Text style={styles.tabStyle} color='textSecondary' fontWeight='bold' fontSize='subheading'>Repositories </Text>
         </Pressable>
         
         {
-          !authorized.loading && authorized.data.authorizedUser?
+          !authorized.loading && authorized.data.authorizedUser ?
+            <>
+            <Pressable onPress={() => history.push('/newreview')}>
+              <Text style={styles.tabStyle} color='textSecondary' fontWeight='bold' fontSize='subheading'>Create a Review </Text>
+            </Pressable>
+            <Pressable onPress={() => history.push('/myreview')}>
+              <Text style={styles.tabStyle} color='textSecondary' fontWeight='bold' fontSize='subheading'>My Reviews </Text>
+            </Pressable>
             <Pressable onPress={()=>signOut()}>
-                <Text style={{ margin: 16 }} color='textSecondary' fontWeight='bold' fontSize='subheading'>Sign Out</Text>
+                <Text style={styles.tabStyle} color='textSecondary' fontWeight='bold' fontSize='subheading'>Sign Out</Text>
             </Pressable>
+            </>
           :
-            <Pressable onPress={()=>console.log('tab pressed')}>
-              <Link to='/signin'>
-                  <Text style={{ margin: 16 }} color='textSecondary' fontWeight='bold' fontSize='subheading'>Sign In</Text>
-              </Link>
+            <>
+            <Pressable onPress={()=>history.push('/signin')}>
+                <Text style={styles.tabStyle} color='textSecondary' fontWeight='bold' fontSize='subheading'>Sign In</Text>
             </Pressable>
+            <Pressable onPress={()=>history.push('/signup')}>
+                <Text style={styles.tabStyle} color='textSecondary' fontWeight='bold' fontSize='subheading'>Sign Up</Text>
+            </Pressable>
+            </>
         }
           
         
